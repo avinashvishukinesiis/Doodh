@@ -20,10 +20,13 @@ const config: Config = {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
 			customYellow: '#FFEEB1',
+			customYellowText: '#FFF4CD',
             customBlueLight: '#D1EFFF',
             customBlue: '#3597D3',
+            customBlueText: '#008ADE',
             customBlueBright: '#8BD3FF',
             customYellowSoft: '#FFDF6F',
+            customYellowDimond: '#F8E5A2',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -75,6 +78,7 @@ const config: Config = {
   		},
 		backgroundImage: {
                  'hero-gradient': 'linear-gradient(to bottom, #FFEEB1 0%, #D1EFFF 70%, #3597D3 100%)',
+				 'custom-gradient': 'linear-gradient(180deg, #8BD3FF 10%, #FFEEB1 60%)',
         },
   		borderRadius: {
   			lg: 'var(--radius)',

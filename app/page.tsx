@@ -2,11 +2,11 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Droplets, Eye, Home, Hand, Flower2, ChevronDown, ChevronUp, Crown } from "lucide-react"
+import { Droplets, Eye, Home, Hand, Flower2, ChevronDown, ChevronUp, Instagram, Mail, Youtube } from "lucide-react"
 
 interface FormData {
   name: string
@@ -32,6 +32,22 @@ export default function HomePage() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const [showOtpForm, setShowOtpForm] = useState(false)
+  const [otp, setOtp] = useState(["", "", "", "", "", ""])
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const carouselImages = [
+    '/placeholder-user.png',
+    '/placeholder-user2.png',
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -72,8 +88,8 @@ export default function HomePage() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    alert("Thank you for joining our waitlist!")
-    setFormData({ name: "", email: "", phone: "", pincode: "" })
+    setPhoneNumber(formData.phone)
+    setShowOtpForm(true)
     setIsSubmitting(false)
   }
 
@@ -82,6 +98,48 @@ export default function HomePage() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
+  }
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return
+
+    const newOtp = [...otp]
+    newOtp[index] = value
+    setOtp(newOtp)
+
+    // Auto focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`)
+      nextInput?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`)
+      prevInput?.focus()
+    }
+  }
+
+  const handleOtpSubmit = async () => {
+    const otpValue = otp.join("")
+    if (otpValue.length !== 6) {
+      alert("Please enter complete OTP")
+      return
+    }
+
+    setIsSubmitting(true)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    alert("OTP verified successfully! Welcome to Doodh & Co.")
+    setShowOtpForm(false)
+    setFormData({ name: "", email: "", phone: "", pincode: "" })
+    setOtp(["", "", "", "", "", ""])
+    setIsSubmitting(false)
+  }
+
+  const handleResendOtp = async () => {
+    alert("OTP resent successfully!")
   }
 
   const faqData = [
@@ -155,61 +213,103 @@ export default function HomePage() {
             Sign Up To Be Among The First To Bring <span className="font-semibold">Doodh & Co.</span> Home.
           </p>
 
-          <Card className="max-w-md mx-auto bg-white/80 backdrop-blur-sm">
+          <Card className="max-w-md mx-auto bg-customYellowText rounded-none border border-customBlue backdrop-blur-sm">
             <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    className={`bg-blue-100 border-0 ${errors.name ? "ring-2 ring-red-500" : ""}`}
-                  />
-                  {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                </div>
+              {!showOtpForm ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.name ? "ring-2 ring-red-500" : ""}`}
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
 
-                <div>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className={`bg-blue-100 border-0 ${errors.email ? "ring-2 ring-red-500" : ""}`}
-                  />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                </div>
+                  <div>
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.email ? "ring-2 ring-red-500" : ""}`}
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
 
-                <div>
-                  <Input
-                    type="tel"
-                    placeholder="Phone"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className={`bg-blue-100 border-0 ${errors.phone ? "ring-2 ring-red-500" : ""}`}
-                  />
-                  {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                </div>
+                  <div>
+                    <Input
+                      type="tel"
+                      placeholder="Phone"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.phone ? "ring-2 ring-red-500" : ""}`}
+                    />
+                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                  </div>
 
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="Pincode"
-                    value={formData.pincode}
-                    onChange={(e) => handleInputChange("pincode", e.target.value)}
-                    className={`bg-blue-100 border-0 ${errors.pincode ? "ring-2 ring-red-500" : ""}`}
-                  />
-                  {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
-                </div>
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Pincode"
+                      value={formData.pincode}
+                      onChange={(e) => handleInputChange("pincode", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.pincode ? "ring-2 ring-red-500" : ""}`}
+                    />
+                    {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
+                  </div>
 
-                <Button
-                  type="submit"
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Joining..." : "Verify & Join the Waitlist"}
-                </Button>
-              </form>
+                  <Button
+                    type="submit"
+                    className="w-full bg-customYellowSoft hover:bg-customYellow hover:border hover:border-customYellowSoft text-customBlue font-ibm"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Joining..." : "Verify & Join the Waitlist"}
+                  </Button>
+                </form>
+              ) : (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-blue-600">OTP Verification</h3>
+
+                  <div className="text-center">
+                    <p className="text-gray-600 text-sm mb-4">We Have Sent A Verification Code To</p>
+                    <p className="text-gray-800 font-medium">
+                      +91-{phoneNumber.slice(0, 2)}XXX {phoneNumber.slice(-4)}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-center gap-3">
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        id={`otp-${index}`}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                        className="w-12 h-12 text-center text-lg font-semibold bg-blue-100 border-2 border-blue-200 rounded-lg focus:border-blue-400 focus:outline-none"
+                      />
+                    ))}
+                  </div>
+
+                  <div className="text-center">
+                    <button onClick={handleResendOtp} className="text-blue-600 text-sm hover:underline">
+                      Resend OTP
+                    </button>
+                  </div>
+
+                  <Button
+                    onClick={handleOtpSubmit}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Verifying..." : "Confirm"}
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -219,32 +319,32 @@ export default function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
               <div className="text-center">
                 <Droplets className="w-12 h-12 md:w-16 md:h-16 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueLight font-ibm text-sm md:text-base mb-2">OUR MILK IS</h3>
-                <p className="text-customBlueLight font-ibm text-xs md:text-sm">100% ORGANIC</p>
+                <h3 className="font-semibold text-customBlueText md:text-customBlueLight font-ibm text-sm md:text-base mb-2">OUR MILK IS</h3>
+                <p className="text-customBlueText md:text-customBlueLight font-ibm text-xs md:text-sm">100% ORGANIC</p>
               </div>
 
               <div className="text-center">
                 <Eye className="w-12 h-12 md:w-16 md:h-16 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueLight font-ibm text-sm md:text-base mb-2">TRANSPARENT</h3>
-                <p className="text-customBlueLight font-ibm text-xs md:text-sm">SUPPLY CHAIN</p>
+                <h3 className="font-semibold text-customBlueText md:text-customBlueLight font-ibm text-sm md:text-base mb-2">TRANSPARENT</h3>
+                <p className="text-customBlueText md:text-customBlueLight font-ibm text-xs md:text-sm">SUPPLY CHAIN</p>
               </div>
 
               <div className="text-center">
                 <Home className="w-12 h-12 md:w-16 md:h-16 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueLight font-ibm text-sm md:text-base mb-2">SUPPORTING</h3>
-                <p className="text-customBlueLight font-ibm text-xs md:text-sm">FAMILY NOURISHMENT</p>
+                <h3 className="font-semibold text-customBlueText md:text-customBlueLight font-ibm text-sm md:text-base mb-2">SUPPORTING</h3>
+                <p className="text-customBlueText md:text-customBlueLight font-ibm text-xs md:text-sm">FAMILY NOURISHMENT</p>
               </div>
 
               <div className="text-center">
                 <Hand className="w-12 h-12 md:w-16 md:h-16 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueLight font-ibm text-sm md:text-base mb-2">WE WORK WITH</h3>
-                <p className="text-customBlueLight font-ibm text-xs md:text-sm">LOCAL FARMERS</p>
+                <h3 className="font-semibold text-customBlueText md:text-customBlueLight font-ibm text-sm md:text-base mb-2">WE WORK WITH</h3>
+                <p className="text-customBlueText md:text-customBlueLight font-ibm text-xs md:text-sm">LOCAL FARMERS</p>
               </div>
 
               <div className="text-center col-span-2 md:col-span-1">
                 <Flower2 className="w-12 h-12 md:w-16 md:h-16 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueLight text-sm md:text-base mb-2">PURE FODDER</h3>
-                <p className="text-customBlueLight text-xs md:text-sm">FOR THE COW</p>
+                <h3 className="font-semibold text-customBlueText md:text-customBlueLight text-sm md:text-base mb-2">PURE FODDER</h3>
+                <p className="text-customBlueText md:text-customBlueLight text-xs md:text-sm">FOR THE COW</p>
               </div>
             </div>
           </div>
@@ -259,10 +359,10 @@ export default function HomePage() {
       {/* Coming Soon Timeline */}
       <section className="py-8 bg-yellow-200">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 text-center">
-            {["COMING SOON", "Q1 '25", "COMING SOON", "Q2 '25", "COMING SOON", "Q3 '25", "COMING SOON"].map(
+          <div className="flex flex-wrap justify-around items-center gap-4 md:gap-8 text-center">
+            {["COMING SOON", "Doodh & Co", "COMING SOON", "Doodh & Co", "COMING SOON", "Doodh & Co", "COMING SOON"].map(
               (item, index) => (
-                <div key={index} className="text-xs md:text-sm font-semibold text-gray-700">
+                <div key={index} className="text-xs md:text-sm font-medium font-ibm text-customBlue">
                   {item}
                 </div>
               ),
@@ -272,45 +372,57 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-blue-400 to-blue-600">
-        <div className="container mx-auto px-4">
+      <section className="bg-customBlueBright">
+        <div className="container mx-auto md:pr-4">
           <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div className="text-white">
+            <div className="text-white bg-customBlue py-16 md:py-24">
               <div className="mb-8 w-full">
-                <div className="flex flex-wrap gap-2 mb-6 w-full items-center">
+                <div className="flex flex-wrap gap-2 mb-6 w-full items-center justify-center">
                   {Array.from({ length: 15 }, (_, i) => (
-                    <div key={i} className="w-4 h-4 bg-yellow-400 transform rotate-45" />
+                    <div key={i} className="w-4 h-4 bg-customYellowDimond transform rotate-45" />
                   ))}
                 </div>
-                <div className="p-4 mb-6">
+                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md p-4">
                   <img
-                    src="/placeholder-user.png"
-                    alt="Traditional dairy practices"
-                    className="w-full object-cover rounded"
+                    src={carouselImages[currentIndex]}
+                    alt={`Slide ${currentIndex + 1}`}
+                    className="w-full h-full object-cover transition-all duration-700 ease-in-out"
                   />
+
+                  {/* Navigation dots */}
+                  {/* <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    {carouselImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentIndex(idx)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-customBlueText' : 'bg-white/40'
+                          }`}
+                      />
+                    ))}
+                  </div> */}
                 </div>
-                <p className="text-sm leading-relaxed font-ibm text-customYellow">
+                <p className="text-sm leading-relaxed font-ibm text-customYellow pl-4">
                   Doodh & Co. is born from a simple need: to make pure, honest milk accessible to everyone. We believe
                   in transparency and trust in every step, from farm to your family's table. Our mission is to change
                   the system from within.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-6">
+                <div className="flex flex-wrap gap-2 mt-6 justify-center">
                   {Array.from({ length: 15 }, (_, i) => (
-                    <div key={i} className="w-4 h-4 bg-yellow-400 transform rotate-45" />
+                    <div key={i} className="w-4 h-4 bg-customYellowDimond transform rotate-45" />
                   ))}
                 </div>
               </div>
             </div>
 
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">YOUR QUESTIONS, ANSWERED!</h2>
+            <div className="py-16 md:py-24 h-full flex flex-col items-center justify-center">
+              <h2 className="text-3xl md:text-4xl font-medium font-yatra text-customYellowText mb-8">YOUR QUESTIONS, ANSWERED!</h2>
 
               <div className="space-y-4">
                 {faqData.map((faq, index) => (
-                  <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg">
+                  <div key={index} className="backdrop-blur-sm border-t-2 border-customBlueText">
                     <button
                       onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                      className="w-full p-4 text-left flex justify-between items-center text-white hover:bg-white/5 transition-colors"
+                      className="w-full p-4 text-left flex justify-between items-center text-customBlueText font-ibm"
                     >
                       <span className="font-medium">{faq.question}</span>
                       {expandedFaq === index ? (
@@ -319,9 +431,10 @@ export default function HomePage() {
                         <ChevronDown className="w-5 h-5 flex-shrink-0" />
                       )}
                     </button>
-                    {expandedFaq === index && <div className="px-4 pb-4 text-white/90">{faq.answer}</div>}
+                    {expandedFaq === index && <div className="px-4 pb-4 text-customBlueText font-ibm">{faq.answer}</div>}
                   </div>
                 ))}
+                <div className="border border-customBlueText" />
               </div>
             </div>
           </div>
@@ -329,56 +442,65 @@ export default function HomePage() {
       </section>
 
       {/* Mission Statement */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-200 to-yellow-100 text-center">
+      <footer className="pt-16 md:pt-24 bg-custom-gradient text-center">
         <div className="container mx-auto px-4">
-          <p className="text-xl md:text-2xl text-blue-800 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-customBlue font-yatra max-w-4xl mx-auto leading-relaxed">
             Doodh & Co's mission is simple: to blend traditional practices with humble intent & modern resources, making
             pure milk accessible to more people at an effective cost.
           </p>
         </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="bg-yellow-200 py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl md:text-6xl font-bold text-blue-600 mb-4">Doodh & Co.</h2>
-          </div>
 
-          <div className="grid md:grid-cols-4 gap-8 text-sm">
-            <div>
-              <div className="flex items-center mb-4">
-                <img src="/footerLogo.png" alt="Cow illustration logo" />
+        {/* Footer */}
+        <div className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
+            </div>
+            <div className="px-4 md:px-14">
+              <div className="grid md:grid-cols-4 gap-8 text-sm border-y border-customBlue px-6 py-8">
+                <div>
+                  <div className="flex items-center mb-4">
+                    <img src="/footerLogo.png" alt="Cow illustration logo" />
+                  </div>
+                </div>
+
+                <div className="text-start">
+                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">FROM COW TO CUP</h4>
+                  <p className="text-customBlue font-ibm mb-2 text-sm font-medium">Get early access to our
+                    first batch of pure milk</p>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Enter Mail"
+                      className={`bg-[#D1EEFF] border border-customBlue focus:outline-none focus:ring-0 focus:ring-transparent focus:border-customBlueText focus:shadow-none font-ibm w-full rounded-md px-4 py-2`}
+                    />
+                    <p className="absolute right-2 text-sm bottom-0 top-0 uppercase flex items-center justify-center font-ibm text-customBlue cursor-pointer">join now</p>
+                  </div>
+                </div>
+
+                <div className="text-start">
+                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">RESOURCES</h4>
+                  <ul className="space-y-1 text-customBlue font-ibm text-sm font-medium">
+                    <li>Terms & Conditions</li>
+                    <li>Refund & Cancellation</li>
+                    <li>Privacy Policy</li>
+                  </ul>
+                </div>
+
+                <div className="text-start">
+                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">CONTACT</h4>
+                  <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p>
+                  <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Call Us <Mail width={16} /></p>
+                  <p className="text-customBlue font-ibm text-sm font-medium flex gap-4 items-center">Youtube <Youtube width={16} /></p>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h4 className="font-semibold text-blue-800 mb-3">FROM COW TO CUP</h4>
-              <p className="text-blue-700 mb-2">Our daily secret to our fresh batch of pure milk</p>
-              <Button variant="outline" size="sm" className="text-xs bg-transparent">
-                LEARN MORE ABOUT US
-              </Button>
-            </div>
 
-            <div>
-              <h4 className="font-semibold text-blue-800 mb-3">RESOURCES</h4>
-              <ul className="space-y-1 text-blue-700">
-                <li>Terms & Conditions</li>
-                <li>Refund & Cancellation</li>
-                <li>Privacy Policy</li>
-              </ul>
+            <div className="pt-4 px-4 md:px-20 text-start text-md text-customBlue font-ibm font-medium">
+              DOODH & CO. | 2024 | ALL RIGHTS RESERVED
             </div>
-
-            <div>
-              <h4 className="font-semibold text-blue-800 mb-3">CONTACT</h4>
-              <p className="text-blue-700 mb-1">Instagram @</p>
-              <p className="text-blue-700 mb-1">Call Us</p>
-              <p className="text-blue-700">Youtube @</p>
-            </div>
-          </div>
-
-          <div className="border-t border-blue-300 mt-8 pt-4 text-center text-xs text-blue-600">
-            DOODH & CO. | 2024 | ALL RIGHTS RESERVED
           </div>
         </div>
       </footer>
