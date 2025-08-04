@@ -77,7 +77,7 @@ const config: Config = {
   			}
   		},
 		backgroundImage: {
-                 'hero-gradient': 'linear-gradient(to bottom, #FFEEB1 0%, #D1EFFF 70%, #3597D3 100%)',
+                 'hero-gradient': 'linear-gradient(to bottom, #FFEEB1 0%, #D1EFFF 100%, #3597D3 100%)',
 				 'custom-gradient': 'linear-gradient(180deg, #8BD3FF 10%, #FFEEB1 60%)',
         },
   		borderRadius: {
