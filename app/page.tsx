@@ -139,7 +139,6 @@ export default function HomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     // Basic validation
     const newErrors: Record<string, string> = {};
     if (!formData.name) newErrors.name = "Name is required";
@@ -605,32 +604,32 @@ export default function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
               <div className="text-center">
                 <img src="./spade.png" className="h-12 md:h-12 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">OUR MILK IS</h3>
-                <p className="text-customBlueText md:text-customBlue font-ibm text-xs md:text-sm">100% ORGANIC</p>
+                <p className="font-medium text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">OUR MILK IS</p>
+                <p className="text-customBlueText font-medium md:text-customBlue font-ibm text-sm md:text-base">100% ORGANIC</p>
               </div>
 
               <div className="text-center">
                 <img src="./eye.png" className="h-12 md:h-12 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">TRANSPARENT</h3>
-                <p className="text-customBlueText md:text-customBlue font-ibm text-xs md:text-sm">SUPPLY CHAIN</p>
+                <p className="font-medium text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">TRANSPARENT</p>
+                <p className="text-customBlueText font-medium md:text-customBlue font-ibm text-sm md:text-base">SUPPLY CHAIN</p>
               </div>
 
               <div className="text-center">
                 <img src="./armn.png" className="h-12 md:h-12 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">SUPPORTING</h3>
-                <p className="text-customBlueText md:text-customBlue font-ibm text-xs md:text-sm">FAMILY NOURISHMENT</p>
+                <p className="font-medium text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">SUPPORTING</p>
+                <p className="text-customBlueText font-medium md:text-customBlue font-ibm text-sm md:text-base">FAMILY NOURISHMENT</p>
               </div>
 
               <div className="text-center">
                 <img src="./palm.png" className="h-12 md:h-12 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">WE WORK WITH</h3>
-                <p className="text-customBlueText md:text-customBlue font-ibm text-xs md:text-sm">LOCAL FARMERS</p>
+                <p className="font-medium text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">WE WORK WITH</p>
+                <p className="text-customBlueText font-medium md:text-customBlue font-ibm text-sm md:text-base">LOCAL FARMERS</p>
               </div>
 
               <div className="text-center col-span-2 md:col-span-1">
                 <img src="./flower.png" className="h-12 md:h-12 text-customBlue mx-auto mb-4" />
-                <h3 className="font-semibold text-customBlueText md:text-customBlue text-sm md:text-base mb-2">PURE FODDER</h3>
-                <p className="text-customBlueText md:text-customBlue text-xs md:text-sm">FOR THE COW</p>
+                <p className="font-medium text-customBlueText md:text-customBlue font-ibm text-sm md:text-base mb-2">PURE FODDER</p>
+                <p className="text-customBlueText font-medium md:text-customBlue font-ibm text-sm md:text-base">FOR THE COW</p>
               </div>
             </div>
           </div>
@@ -643,7 +642,7 @@ export default function HomePage() {
 
 
       {/* Coming Soon Timeline */}
-      <section className="py-4 bg-yellow-200">
+      <section className="py-4 bg-customYellowText">
         <Marquee
           speed={50}
           gradient={false}
@@ -666,7 +665,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section  ref={faqRef} className="bg-customBlueBright">
+      <section ref={faqRef} className="bg-customBlueBright">
         <div className="w-full mx-auto md:pr-4">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <div className="text-white bg-customBlue py-16 md:py-24">
@@ -676,7 +675,7 @@ export default function HomePage() {
                     <div key={i} className="w-4 h-4 bg-customYellowDimond transform rotate-45" />
                   ))}
                 </div>
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md p-4">
+                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md p-4 md:px-24">
                   <img
                     src={carouselImages[currentIndex]}
                     alt={`Slide ${currentIndex + 1}`}
@@ -736,68 +735,67 @@ export default function HomePage() {
       </section>
 
       {/* Mission Statement */}
-      <footer className="pt-16 md:pt-24 bg-custom-gradient text-center">
+      <div className="pt-16 md:pt-24 bg-custom-gradient text-center flex flex-col gap-12 md:gap-24">
         <div className="container mx-auto px-4">
           <p className="text-xl md:text-2xl text-customBlue font-yatra max-w-4xl mx-auto leading-relaxed">
             Doodh & Co's mission is simple: to blend traditional practices with humble intent & modern resources, making
             pure milk accessible to more people at an effective cost.
           </p>
         </div>
-
-
-        {/* Footer */}
-        <div className="py-12">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
-            </div>
-            <div className="px-4 md:px-14">
-              <div className="grid md:grid-cols-4 gap-8 text-sm border-y border-customBlue px-6 py-8">
-                <div>
-                  <div className="flex items-center mb-4">
-                    <img src="/footerLogo.png" alt="Cow illustration logo" />
-                  </div>
-                </div>
-
-                <div className="text-start">
-                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">FROM COW TO CUP</h4>
-                  <p className="text-customBlue font-ibm mb-2 text-sm font-medium">Get early access to our
-                    first batch of pure milk</p>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="Enter Mail"
-                      className={`bg-[#D1EEFF] border border-customBlue focus:outline-none focus:ring-0 focus:ring-transparent focus:border-customBlueText focus:shadow-none font-ibm w-full rounded-md px-4 py-2`}
-                    />
-                    <p className="absolute right-2 text-sm bottom-0 top-0 uppercase flex items-center justify-center font-ibm text-customBlue cursor-pointer">join now</p>
-                  </div>
-                </div>
-
-                <div className="text-start">
-                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">RESOURCES</h4>
-                  <ul className="space-y-1 text-customBlue font-ibm text-sm font-medium">
-                    <li>Terms & Conditions</li>
-                    <li>Refund & Cancellation</li>
-                    <li>Privacy Policy</li>
-                  </ul>
-                </div>
-
-                <div className="text-start">
-                  <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">CONTACT</h4>
-                  <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p>
-                  <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Call Us <Mail width={16} /></p>
-                  <Link href={'https://youtube.com/@doodhandco?si=1UsV8aZTJcEmsgaW'} target="_blank"><p className="text-customBlue font-ibm text-sm font-medium flex gap-4 items-center">Youtube <Youtube width={16} /></p></Link>
+        <div className="text-center mb-8">
+          <h2 className="text-4xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
+        </div>
+      </div>
+      {/* Footer */}
+      <footer className="py-12 bg-customYellow">
+        <div className="container mx-auto px-4">
+          <div className="px-4 md:px-14">
+            <div className="grid md:grid-cols-4 gap-8 text-sm border-y border-customBlue px-6 py-8">
+              <div>
+                <div className="flex items-center mb-4">
+                  <img src="/footerLogo.png" alt="Cow illustration logo" />
                 </div>
               </div>
+
+              <div className="text-start">
+                <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">FROM COW TO CUP</h4>
+                <p className="text-customBlue font-ibm mb-2 text-sm font-medium">Get early access to our
+                  first batch of pure milk</p>
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Enter Mail"
+                    className={`bg-[#D1EEFF] border border-customBlue focus:outline-none focus:ring-0 focus:ring-transparent focus:border-customBlueText focus:shadow-none font-ibm w-full rounded-md px-4 py-2`}
+                  />
+                  <p className="absolute right-2 text-sm bottom-0 top-0 uppercase flex items-center justify-center font-ibm text-customBlue cursor-pointer">join now</p>
+                </div>
+              </div>
+
+              <div className="text-start">
+                <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">RESOURCES</h4>
+                <ul className="space-y-1 text-customBlue font-ibm text-sm font-medium">
+                  <li>Terms & Conditions</li>
+                  <li>Refund & Cancellation</li>
+                  <li>Privacy Policy</li>
+                </ul>
+              </div>
+
+              <div className="text-start">
+                <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">CONTACT</h4>
+                <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p>
+                <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Call Us <Mail width={16} /></p>
+                <Link href={'https://youtube.com/@doodhandco?si=1UsV8aZTJcEmsgaW'} target="_blank"><p className="text-customBlue font-ibm text-sm font-medium flex gap-4 items-center">Youtube <Youtube width={16} /></p></Link>
+              </div>
             </div>
+          </div>
 
 
-            <div className="pt-4 px-4 md:px-20 text-start text-md text-customBlue font-ibm font-medium">
-              DOODH & CO. | 2024 | ALL RIGHTS RESERVED
-            </div>
+          <div className="pt-4 px-4 md:px-20 text-start text-md text-customBlue font-ibm font-medium">
+            DOODH & CO. | 2024 | ALL RIGHTS RESERVED
           </div>
         </div>
       </footer>
+
     </div>
   )
 }
