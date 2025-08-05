@@ -1,7 +1,7 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+// import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAJZJoLvh7DIn_p7LxJMoWAW2ujpOBHDIA",
@@ -14,13 +14,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LcXeporAAAAAHNXCReYt2LGhhKZtNLusJM-cOuQ'),
+// const appCheck = initializeAppCheck(app, {
+//   provider: new ReCaptchaV3Provider('6LcXeporAAAAAHNXCReYt2LGhhKZtNLusJM-cOuQ'),
 
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  isTokenAutoRefreshEnabled: true
-});
+//   // Optional argument. If true, the SDK automatically refreshes App Check
+//   // tokens as needed.
+//   isTokenAutoRefreshEnabled: true
+// });
 const auth = getAuth(app);
 
 export { auth, RecaptchaVerifier, signInWithPhoneNumber };

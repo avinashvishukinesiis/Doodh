@@ -12,11 +12,7 @@ import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "@/firebase"
 import { useRef } from "react";
 import Link from "next/link";
 
-declare global {
-  interface Window {
-    confirmationResult: any;
-  }
-}
+
 
 interface FormData {
   name: string
@@ -47,6 +43,7 @@ export default function HomePage() {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
+  const [isRecaptchaLoading, setIsRecaptchaLoading] = useState(false);
 
   const faqRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
@@ -71,41 +68,67 @@ export default function HomePage() {
   }, []);
 
   // Helper function to initialize RecaptchaVerifier
-  const initializeRecaptcha = () => {
-    try {
-      // Clear any existing recaptcha
-      const recaptchaContainer = document.getElementById('recaptcha-container');
-      if (recaptchaContainer) {
-        recaptchaContainer.innerHTML = '';
-      }
+  // const initializeRecaptcha = () => {
+  //   try {
+  //     // Clear any existing recaptcha
+  //     const recaptchaContainer = document.getElementById('recaptcha-container');
 
-      // Clear existing verifier if it exists
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
-      }
+  //     if (!recaptchaContainer) {
+  //       console.error('reCAPTCHA container not found');
+  //       return null;
+  //     }
 
-      // Create new RecaptchaVerifier
-      const newRecaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: () => console.log("Recaptcha resolved"),
-          'expired-callback': () => {
-            console.log("Recaptcha expired");
-            // Clear and reinitialize on expiry
+  //     if (recaptchaContainer) {
+  //       recaptchaContainer.innerHTML = '';
+  //     }
+
+  //     // Clear existing verifier if it exists
+  //     if (recaptchaVerifier) {
+  //       try {
+  //         recaptchaVerifier.clear();
+  //       } catch (error) {
+  //         console.log('Error clearing existing verifier:', error);
+  //       }
+  //     }
+
+  //     // Create new RecaptchaVerifier
+  //     const newRecaptchaVerifier = new RecaptchaVerifier(
+  //       auth,
+  //       'recaptcha-container', // Use string ID, not the element
+  //       {
+  //         size: 'invisible',
+  //         callback: (response:any) => {
+  //           console.log('Recaptcha resolved:', response);
+  //         },
+  //         'expired-callback': () => {
+  //           console.log('Recaptcha expired');
+  //           setRecaptchaVerifier(null);
+  //         }
+  //       }
+  //     );
+
+  //     setRecaptchaVerifier(newRecaptchaVerifier);
+  //     return newRecaptchaVerifier;
+  //   } catch (error) {
+  //     console.error("Error initializing recaptcha:", error);
+  //     return null;
+  //   }
+  // };
+  
+  useEffect(()=>{
+    window.recaptchaVerifier = new RecaptchaVerifier(auth,'recaptcha-container',{
+      'size':'normal',
+      'callback':(response:any)=>{
+
+      },
+      'expired-callback': () => {
+            console.log('Recaptcha expired');
             setRecaptchaVerifier(null);
           }
-        }
-      );
-
-      setRecaptchaVerifier(newRecaptchaVerifier);
-      return newRecaptchaVerifier;
-    } catch (error) {
-      console.error("Error initializing recaptcha:", error);
-      return null;
     }
-  };
+
+    )
+  },[auth])
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -139,6 +162,7 @@ export default function HomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    debugger
     // Basic validation
     const newErrors: Record<string, string> = {};
     if (!formData.name) newErrors.name = "Name is required";
@@ -153,16 +177,21 @@ export default function HomePage() {
     }
 
     try {
-      // Get or create RecaptchaVerifier
-      let verifier = recaptchaVerifier;
-      if (!verifier) {
-        verifier = initializeRecaptcha();
-        if (!verifier) {
-          throw new Error("Failed to initialize reCAPTCHA");
-        }
-      }
+      // Wait a bit to ensure DOM is ready
+      // await new Promise(resolve => setTimeout(resolve, 100));
+      // // Get or create RecaptchaVerifier
+      // let verifier = recaptchaVerifier;
+      // if (!verifier) {
+      //   verifier = initializeRecaptcha();
+      //   if (!verifier) {
+      //     throw new Error("Failed to initialize reCAPTCHA");
+      //   }
+      // }
 
-      const confirmation = await signInWithPhoneNumber(auth, `+91${formData.phone}`, verifier);
+      // // Render the recaptcha before using it
+      // await verifier.render();
+
+      const confirmation = await signInWithPhoneNumber(auth, `+91${formData.phone}`, window.recaptchaVerifier);
       window.confirmationResult = confirmation;
 
       setPhoneNumber(formData.phone);
@@ -170,33 +199,54 @@ export default function HomePage() {
     } catch (error: any) {
       console.error("SMS send failed:", error);
 
-      // Handle specific reCAPTCHA errors
-      if (error.message?.includes("reCAPTCHA has already been rendered")) {
-        // Force reinitialize
+
+      console.error("SMS send failed:", error);
+
+      // Handle specific error cases
+      if (error.code === 'auth/too-many-requests') {
+        alert("Too many requests. Please try again later.");
+      } else if (error.message?.includes('reCAPTCHA')) {
+        // Clear and reinitialize on reCAPTCHA errors
+        cleanupRecaptcha();
         setRecaptchaVerifier(null);
-        try {
-          const newVerifier = initializeRecaptcha();
-          if (newVerifier) {
-            const confirmation = await signInWithPhoneNumber(auth, `+91${formData.phone}`, newVerifier);
-            window.confirmationResult = confirmation;
-            setPhoneNumber(formData.phone);
-            setShowOtpForm(true);
-            setIsSubmitting(false);
-            return;
-          }
-        } catch (retryError) {
-          console.error("Retry failed:", retryError);
-        }
+        alert("reCAPTCHA error. Please try again.");
+      } else {
+        alert("Failed to send OTP. Please try again.");
       }
 
-      alert("Failed to send OTP. Please try again.");
-
-      // Clear recaptcha on error
-      const recaptchaContainer = document.getElementById('recaptcha-container');
-      if (recaptchaContainer) {
-        recaptchaContainer.innerHTML = '';
-      }
+      // Always cleanup on error
+      cleanupRecaptcha();
       setRecaptchaVerifier(null);
+
+
+
+      // // Handle specific reCAPTCHA errors
+      // if (error.message?.includes("reCAPTCHA has already been rendered")) {
+      //   // Force reinitialize
+      //   setRecaptchaVerifier(null);
+      //   try {
+      //     const newVerifier = initializeRecaptcha();
+      //     if (newVerifier) {
+      //       const confirmation = await signInWithPhoneNumber(auth, `+91${formData.phone}`, newVerifier);
+      //       window.confirmationResult = confirmation;
+      //       setPhoneNumber(formData.phone);
+      //       setShowOtpForm(true);
+      //       setIsSubmitting(false);
+      //       return;
+      //     }
+      //   } catch (retryError) {
+      //     console.error("Retry failed:", retryError);
+      //   }
+      // }
+
+      // alert("Failed to send OTP. Please try again.");
+
+      // // Clear recaptcha on error
+      // const recaptchaContainer = document.getElementById('recaptcha-container');
+      // if (recaptchaContainer) {
+      //   recaptchaContainer.innerHTML = '';
+      // }
+      // setRecaptchaVerifier(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -316,13 +366,23 @@ export default function HomePage() {
     try {
       setIsSubmitting(true);
 
-      // Always reinitialize for resend
-      const verifier = initializeRecaptcha();
-      if (!verifier) {
-        throw new Error("Failed to initialize reCAPTCHA for resend");
-      }
+      // Clean up existing recaptcha
+      cleanupRecaptcha();
+      setRecaptchaVerifier(null);
 
-      const confirmation = await signInWithPhoneNumber(auth, `+91${phoneNumber}`, verifier);
+      // Wait a bit before reinitializing
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Initialize new verifier
+      // const verifier = initializeRecaptcha();
+      // if (!verifier) {
+      //   throw new Error("Failed to initialize reCAPTCHA for resend");
+      // }
+
+      // // Render before using
+      // await verifier.render();
+
+      const confirmation = await signInWithPhoneNumber(auth, `+91${phoneNumber}`, window.recaptchaVerifier);
       window.confirmationResult = confirmation;
 
       // Clear OTP inputs
@@ -330,27 +390,36 @@ export default function HomePage() {
       document.getElementById('otp-0')?.focus();
 
       alert("New OTP sent successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Resend failed:", error);
-      alert("Failed to resend OTP. Please try again.");
 
-      // Clear recaptcha on error
-      const recaptchaContainer = document.getElementById('recaptcha-container');
-      if (recaptchaContainer) {
-        recaptchaContainer.innerHTML = '';
+      if (error.code === 'auth/too-many-requests') {
+        alert("Too many requests. Please wait before trying again.");
+      } else {
+        alert("Failed to resend OTP. Please try again.");
       }
+
+      cleanupRecaptcha();
       setRecaptchaVerifier(null);
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   const cleanupRecaptcha = () => {
+    try {
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+      }
+    } catch (error) {
+      console.log('Error clearing recaptcha verifier:', error);
+    }
+
     const recaptchaContainer = document.getElementById('recaptcha-container');
     if (recaptchaContainer) {
       recaptchaContainer.innerHTML = '';
     }
-  }
+  };
 
   // Add cleanup on component unmount
   useEffect(() => {
@@ -360,6 +429,13 @@ export default function HomePage() {
       }
     };
   }, [recaptchaVerifier]);
+
+  useEffect(() => {
+    return () => {
+      cleanupRecaptcha();
+    };
+  }, []);
+
 
   // const storeUserData = async (user: any) => {
   //   try {
@@ -596,7 +672,14 @@ export default function HomePage() {
               )}
             </CardContent>
           </Card>
-          <div id="recaptcha-container"></div>
+          <div
+            id="recaptcha-container"
+            style={{
+              position: 'absolute',
+              top: '-9999px',
+              left: '-9999px'
+            }}
+          ></div>
         </div>
         {/* Values Section */}
         <div className="pt-16 md:pt-24">
