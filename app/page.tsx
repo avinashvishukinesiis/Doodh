@@ -119,19 +119,22 @@ export default function HomePage() {
   // };
 
   useEffect(() => {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'normal',
-      'callback': (response: any) => {
-
+  if (!window.recaptchaVerifier) {
+    const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: 'invisible',
+      callback: (response: any) => {
+        console.log('Recaptcha resolved:', response);
       },
       'expired-callback': () => {
         console.log('Recaptcha expired');
-        setRecaptchaVerifier(null);
       }
-    }
+    });
 
-    )
-  }, [auth])
+    verifier.render();
+    window.recaptchaVerifier = verifier;
+  }
+}, []);
+
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -193,7 +196,7 @@ export default function HomePage() {
 
       // // Render the recaptcha before using it
       // await verifier.render();
-
+      await window.recaptchaVerifier.render();
       const confirmation = await signInWithPhoneNumber(auth, `+91${formData.phone}`, window.recaptchaVerifier);
       window.confirmationResult = confirmation;
 
@@ -384,7 +387,7 @@ export default function HomePage() {
 
       // // Render before using
       // await verifier.render();
-
+      await window.recaptchaVerifier.render();
       const confirmation = await signInWithPhoneNumber(auth, `+91${phoneNumber}`, window.recaptchaVerifier);
       window.confirmationResult = confirmation;
 
@@ -728,7 +731,7 @@ export default function HomePage() {
 
 
       {/* Coming Soon Timeline */}
-      <section className="py-4 bg-customYellowText">
+      <section className="py-4 bg-customYellowText border-2 border-customBlue">
         <Marquee
           speed={50}
           gradient={false}
@@ -736,15 +739,27 @@ export default function HomePage() {
         >
           {[
             "COMING SOON",
-            "Doodh & Co",
+            "IMAGE",
             "COMING SOON",
-            "Doodh & Co",
+            "IMAGE",
             "COMING SOON",
-            "Doodh & Co",
+            "IMAGE",
             "COMING SOON",
+            "IMAGE",
+            "COMING SOON",
+            "IMAGE",
+            "COMING SOON",
+            "IMAGE",
           ].map((item, index) => (
-            <span key={index} className="mx-6">
-              {item}
+            <span key={index} className="mx-6 flex items-center">
+              {item === "IMAGE" ? (
+                <img
+                  src="/devlipi.png"
+                  alt="Doodh & Co"
+                />
+              ) : (
+                item
+              )}
             </span>
           ))}
         </Marquee>
@@ -794,7 +809,7 @@ export default function HomePage() {
             </div>
 
             <div className="py-16 md:py-24 h-full flex flex-col items-center justify-center px-4 md:px-0">
-              <h2 className="text-3xl md:text-4xl font-medium font-yatra text-customYellowText mb-8">YOUR QUESTIONS, ANSWERED!</h2>
+              <h2 className="text-2xl md:text-4xl font-medium font-yatra text-customYellowText mb-8 text-center">YOUR QUESTIONS, ANSWERED!</h2>
 
               <div className="space-y-4 w-full">
                 {faqData.map((faq, index) => (
@@ -836,7 +851,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="text-center mb-8">
-          <h2 className="text-4xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
+          <h2 className="text-5xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
         </div>
       </div>
       {/* Footer */}
@@ -875,7 +890,7 @@ export default function HomePage() {
 
               <div className="text-start">
                 <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">CONTACT</h4>
-                <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p>
+                <Link href={'https://www.instagram.com/doodhandco?igsh=MXBuczVnY3BqNWVlZg%3D%3D&utm_source=qr'} target="_blank"><p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p></Link>
                 <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Call Us <Mail width={16} /></p>
                 <Link href={'https://youtube.com/@doodhandco?si=1UsV8aZTJcEmsgaW'} target="_blank"><p className="text-customBlue font-ibm text-sm font-medium flex gap-4 items-center">Youtube <Youtube width={16} /></p></Link>
               </div>
