@@ -7,10 +7,13 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Droplets, Eye, Home, Hand, Flower2, ChevronDown, ChevronUp, Instagram, Mail, Youtube } from "lucide-react"
+import { Instagram, Mail, Youtube } from "lucide-react"
+import { GoPlusCircle } from 'react-icons/go'
+import { FiMinusCircle } from 'react-icons/fi'
 import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "@/firebase"
 import { useRef } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 
@@ -114,21 +117,21 @@ export default function HomePage() {
   //     return null;
   //   }
   // };
-  
-  useEffect(()=>{
-    window.recaptchaVerifier = new RecaptchaVerifier(auth,'recaptcha-container',{
-      'size':'normal',
-      'callback':(response:any)=>{
+
+  useEffect(() => {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'normal',
+      'callback': (response: any) => {
 
       },
       'expired-callback': () => {
-            console.log('Recaptcha expired');
-            setRecaptchaVerifier(null);
-          }
+        console.log('Recaptcha expired');
+        setRecaptchaVerifier(null);
+      }
     }
 
     )
-  },[auth])
+  }, [auth])
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -802,12 +805,19 @@ export default function HomePage() {
                     >
                       <span className="font-medium">{faq.question}</span>
                       {expandedFaq === index ? (
-                        <ChevronUp className="w-5 h-5 flex-shrink-0" />
+                        <FiMinusCircle className="w-5 h-5 flex-shrink-0" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 flex-shrink-0" />
+                        <GoPlusCircle className="w-5 h-5 flex-shrink-0" />
                       )}
                     </button>
-                    {expandedFaq === index && <div className="px-4 pb-4 text-customBlueText font-ibm">{faq.answer}</div>}
+                    <AnimatePresence>
+                      {expandedFaq === index && <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-4 pb-4 text-customBlueText font-ibm overflow-hidden">{faq.answer}</motion.div>}
+                    </AnimatePresence>
                   </div>
                 ))}
                 <div className="border border-customBlueText" />
