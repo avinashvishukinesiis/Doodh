@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Yatra_One, IBM_Plex_Mono } from 'next/font/google';
+import { ToastContainer } from 'react-toastify';
 
 const yatra = Yatra_One({
   weight: '400',
@@ -29,6 +30,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${yatra.variable} ${ibm.variable}`}>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <body>{children}</body>
     </html>
   )

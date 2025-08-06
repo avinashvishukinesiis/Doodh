@@ -14,6 +14,7 @@ import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "@/firebase"
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+ import {  toast } from 'react-toastify';
 
 
 
@@ -210,14 +211,18 @@ export default function HomePage() {
 
       // Handle specific error cases
       if (error.code === 'auth/too-many-requests') {
-        alert("Too many requests. Please try again later.");
+        // alert("Too many requests. Please try again later.");
+        toast.error("Too many requests. Please try again later.");
       } else if (error.message?.includes('reCAPTCHA')) {
         // Clear and reinitialize on reCAPTCHA errors
         cleanupRecaptcha();
         setRecaptchaVerifier(null);
-        alert("reCAPTCHA error. Please try again.");
+        // alert("reCAPTCHA error. Please try again.");
+        toast.error("reCAPTCHA error. Please try again.");
       } else {
-        alert("Failed to send OTP. Please try again.");
+        // alert("Failed to send OTP. Please try again.");
+        toast.error("Failed to send OTP. Please try again.");
+
       }
 
       // Always cleanup on error
@@ -325,7 +330,8 @@ export default function HomePage() {
     const code = otp.join("");
 
     if (code.length < 6) {
-      alert("Enter complete 6-digit OTP");
+      // alert("Enter complete 6-digit OTP");
+      toast.warning("Enter complete 6-digit OTP");
       setIsSubmitting(false);
       return;
     }
@@ -340,7 +346,8 @@ export default function HomePage() {
       // 3. Add user to waitlist
       // 4. Show success message
 
-      alert("Phone verified successfully! You've been added to our waitlist.");
+      // alert("Phone verified successfully! You've been added to our waitlist.");
+      toast.success("Phone verified successfully! You've been added to our waitlist.");
 
       // Reset form
       setShowOtpForm(false);
@@ -352,12 +359,15 @@ export default function HomePage() {
 
       // Handle specific error types
       if (error.code === 'auth/invalid-verification-code') {
-        alert("Invalid OTP. Please check and try again.");
+        // alert("Invalid OTP. Please check and try again.");
+        toast.error("Invalid OTP. Please check and try again.");
       } else if (error.code === 'auth/code-expired') {
-        alert("OTP has expired. Please request a new one.");
+        // alert("OTP has expired. Please request a new one.");
+        toast.error("OTP has expired. Please request a new one.");
         setShowOtpForm(false);
       } else {
-        alert("Verification failed. Please try again.");
+        // alert("Verification failed. Please try again.");
+        toast.error("Verification failed. Please try again.");
       }
 
       // Clear OTP inputs on error
@@ -395,14 +405,17 @@ export default function HomePage() {
       setOtp(["", "", "", "", "", ""]);
       document.getElementById('otp-0')?.focus();
 
-      alert("New OTP sent successfully!");
+      // alert("New OTP sent successfully!");
+      toast.success("New OTP sent successfully!");
     } catch (error: any) {
       console.error("Resend failed:", error);
 
       if (error.code === 'auth/too-many-requests') {
-        alert("Too many requests. Please wait before trying again.");
+        // alert("Too many requests. Please wait before trying again.");
+        toast.error("Too many requests. Please wait before trying again.");
       } else {
-        alert("Failed to resend OTP. Please try again.");
+        // alert("Failed to resend OTP. Please try again.");
+        toast.error("Failed to resend OTP. Please try again.");
       }
 
       cleanupRecaptcha();
@@ -491,7 +504,7 @@ export default function HomePage() {
         <div className="container mx-auto flex justify-between items-center">
           <button className="text-sm md:text-base hover:underline font-ibm text-customYellow" onClick={scrollToContact}>JOIN US</button>
           <div className="flex items-center">
-            <img src="/Layer_1.png" alt="cow logo" />
+            <img src="/LogoSvg.svg" alt="cow logo" className="h-16"/>
           </div>
           <button className="text-sm md:text-base hover:underline font-ibm text-customYellow" onClick={scrollToFaq}>LEARN MORE</button>
         </div>
@@ -795,7 +808,7 @@ export default function HomePage() {
                     ))}
                   </div> */}
                 </div>
-                <p className="text-sm leading-relaxed font-ibm text-customYellow pl-4">
+                <p className="text-sm leading-relaxed font-ibm text-customYellow pl-4 text-center">
                   Doodh & Co. is born from a simple need: to make pure, honest milk accessible to everyone. We believe
                   in transparency and trust in every step, from farm to your family's table. Our mission is to change
                   the system from within.
@@ -859,9 +872,9 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="px-4 md:px-14">
             <div className="grid md:grid-cols-4 gap-8 text-sm border-y border-customBlue px-6 py-8">
-              <div>
+              <div className="w-full flex items-center justify-center md:justify-start">
                 <div className="flex items-center mb-4">
-                  <img src="/footerLogo.png" alt="Cow illustration logo" />
+                  <img src="/cowSvg.svg" alt="Cow illustration logo" />
                 </div>
               </div>
 
