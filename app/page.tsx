@@ -510,7 +510,7 @@ export default function HomePage() {
                 Just The Way It Should Be.
               </p>
             </div>
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-wider text-customYellow font-yatra">Doodh & Co.</h2>
+            <h2 className="text-4xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-wider text-customYellow font-yatra">Doodh & Co.</h2>
           </div>
         </div>
       </section>
