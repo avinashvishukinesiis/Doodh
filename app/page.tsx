@@ -767,7 +767,7 @@ export default function HomePage() {
             <span key={index} className="mx-6 flex items-center">
               {item === "IMAGE" ? (
                 <img
-                  src="/devlipi.png"
+                  src="/devlipi.svg"
                   alt="Doodh & Co"
                 />
               ) : (
