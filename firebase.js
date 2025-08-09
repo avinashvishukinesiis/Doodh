@@ -4,7 +4,8 @@ import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth
 // import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAJZJoLvh7DIn_p7LxJMoWAW2ujpOBHDIA",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  // apiKey:"AIzaSyAJZJoLvh7DIn_p7LxJMoWAW2ujpOBHDIA",
   authDomain: "doodhandco.firebaseapp.com",
   projectId: "doodhandco",
   storageBucket: "doodhandco.firebasestorage.app",

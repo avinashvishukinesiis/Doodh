@@ -14,19 +14,21 @@ import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "@/firebase"
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
- import {  toast } from 'react-toastify';
-
+import { toast } from 'react-toastify';
+import axios from "axios";
 
 
 interface FormData {
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   pincode: string
 }
 
 interface FormErrors {
-  name?: string
+  firstName?: string
+  lastName?: string
   email?: string
   phone?: string
   pincode?: string
@@ -34,7 +36,8 @@ interface FormErrors {
 
 export default function HomePage() {
   const [formData, setFormData] = useState<FormData>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     pincode: "",
@@ -63,6 +66,7 @@ export default function HomePage() {
     '/placeholder-user.png',
     '/placeholder-user2.png',
   ];
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -120,28 +124,31 @@ export default function HomePage() {
   // };
 
   useEffect(() => {
-  if (!window.recaptchaVerifier) {
-    const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: 'invisible',
-      callback: (response: any) => {
-        console.log('Recaptcha resolved:', response);
-      },
-      'expired-callback': () => {
-        console.log('Recaptcha expired');
-      }
-    });
+    if (!window.recaptchaVerifier) {
+      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: (response: any) => {
+          console.log('Recaptcha resolved:', response);
+        },
+        'expired-callback': () => {
+          console.log('Recaptcha expired');
+        }
+      });
 
-    verifier.render();
-    window.recaptchaVerifier = verifier;
-  }
-}, []);
+      verifier.render();
+      window.recaptchaVerifier = verifier;
+    }
+  }, []);
 
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
     }
 
     if (!formData.email.trim()) {
@@ -169,10 +176,10 @@ export default function HomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    debugger
     // Basic validation
     const newErrors: Record<string, string> = {};
-    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.firstName) newErrors.firstName = "First Name is required";
+    // if (!formData.lastName) newErrors.lastName = "Last Name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.phone || formData.phone.length !== 10) newErrors.phone = "Valid phone is required";
     if (!formData.pincode) newErrors.pincode = "Pincode is required";
@@ -349,9 +356,33 @@ export default function HomePage() {
       // alert("Phone verified successfully! You've been added to our waitlist.");
       toast.success("Phone verified successfully! You've been added to our waitlist.");
 
+      const url = "https://crm.slatesy.com/api/resource/CRM%20Lead";
+
+      const headers = {
+        "Authorization": process.env.NEXT_PUBLIC_CRM_API_KEY,
+        "Content-Type": "application/json"
+      };
+
+      const data = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        mobile_no: formData.phone,
+        status: "New",
+        no_of_employees: "1-10"
+      };
+
+      axios.post(url, data, { headers })
+        .then(res => {
+          console.log("Lead created:", res.data);
+        })
+        .catch(err => {
+          console.error("Error creating lead:", err.response ? err.response.data : err.message);
+        });
+
       // Reset form
       setShowOtpForm(false);
-      setFormData({ name: "", email: "", phone: "", pincode: "" });
+      setFormData({ firstName: "", lastName: "", email: "", phone: "", pincode: "" });
       setOtp(["", "", "", "", "", ""]);
 
     } catch (error: any) {
@@ -504,7 +535,7 @@ export default function HomePage() {
         <div className="container mx-auto flex justify-between items-center">
           <button className="text-sm md:text-base hover:underline font-ibm text-customYellow" onClick={scrollToContact}>JOIN US</button>
           <div className="flex items-center">
-            <img src="/LogoSvg.svg" alt="cow logo" className="h-16"/>
+            <img src="/LogoSvg.svg" alt="cow logo" className="h-16" />
           </div>
           <button className="text-sm md:text-base hover:underline font-ibm text-customYellow" onClick={scrollToFaq}>LEARN MORE</button>
         </div>
@@ -553,12 +584,22 @@ export default function HomePage() {
                   <div>
                     <Input
                       type="text"
-                      placeholder="Name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                      className={`bg-blue-100 border-0 font-ibm ${errors.name ? "ring-2 ring-red-500" : ""}`}
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.firstName ? "ring-2 ring-red-500" : ""}`}
                     />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                  </div>
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange("lastName", e.target.value)}
+                      className={`bg-blue-100 border-0 font-ibm ${errors.lastName ? "ring-2 ring-red-500" : ""}`}
+                    />
+                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
                   </div>
 
                   <div>
