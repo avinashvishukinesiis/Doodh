@@ -849,7 +849,7 @@ export default function HomePage() {
                     ))}
                   </div> */}
                 </div>
-                <p className="text-sm leading-relaxed font-ibm text-customYellow pl-4 text-center">
+                <p className="text-sm leading-relaxed font-ibm text-customYellow px-4 md:px-24 text-center">
                   Doodh & Co. is born from a simple need: to make pure, honest milk accessible to everyone. We believe
                   in transparency and trust in every step, from farm to your family's table. Our mission is to change
                   the system from within.
@@ -905,21 +905,21 @@ export default function HomePage() {
           </p>
         </div>
         <div className="text-center mb-8">
-          <h2 className="text-5xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
+          <h2 className="text-6xl md:text-9xl font-semibold text-customBlue mb-4 font-yatra">Doodh & Co.</h2>
         </div>
       </div>
       {/* Footer */}
       <footer className="py-12 bg-customYellow">
         <div className="container mx-auto px-4">
           <div className="px-4 md:px-14">
-            <div className="grid md:grid-cols-4 gap-8 text-sm border-y border-customBlue px-6 py-8">
+            <div className="grid md:grid-cols-7 gap-8 text-sm border-y border-customBlue px-6 py-8">
               <div className="w-full flex items-center justify-center md:justify-start">
                 <div className="flex items-center mb-4">
                   <img src="/cowSvg.svg" alt="Cow illustration logo" />
                 </div>
               </div>
 
-              <div className="text-start">
+              <div className="text-start md:col-span-2">
                 <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">FROM COW TO CUP</h4>
                 <p className="text-customBlue font-ibm mb-2 text-sm font-medium">Get early access to our
                   first batch of pure milk</p>
@@ -933,7 +933,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="text-start">
+              <div className="text-start md:col-start-6 md:col-span-1">
                 <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">RESOURCES</h4>
                 <ul className="space-y-1 text-customBlue font-ibm text-sm font-medium">
                   <li>Terms & Conditions</li>
@@ -942,7 +942,7 @@ export default function HomePage() {
                 </ul>
               </div>
 
-              <div className="text-start">
+              <div className="text-start md:col-span-1">
                 <h4 className="font-semibold text-customBlue font-ibm text-lg mb-3">CONTACT</h4>
                 <Link href={'https://www.instagram.com/doodhandco?igsh=MXBuczVnY3BqNWVlZg%3D%3D&utm_source=qr'} target="_blank"><p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Instagram <Instagram width={16} /></p></Link>
                 <p className="text-customBlue font-ibm mb-1 text-sm font-medium flex gap-4 items-center">Call Us <Mail width={16} /></p>
